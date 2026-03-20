@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-deep: #0a1f0a;
+      --forest-mid: #1a3a1a;
+      --forest-light: #2d5a2d;
+      --forest-glow: #4a8a4a;
+      --amber: #d4a574;
+      --amber-light: #f4d4a4;
+      --mist: rgba(180, 200, 180, 0.15);
+      --firefly: #fffacd;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      overflow: hidden;
+      background: var(--forest-deep);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sky gradient background */
+    .sky {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        180deg,
+        #0d1b2a 0%,
+        #1b3a4b 15%,
+        #2d5a4a 30%,
+        var(--forest-mid) 50%,
+        var(--forest-deep) 100%
+      );
+    }
+
+    /* Distant mountains/hills */
+    .mountains {
+      position: absolute;
+      bottom: 20%;
+      width: 100%;
+      height: 40%;
+    }
+
+    .mountain {
+      position: absolute;
+      bottom: 0;
+      border-radius: 50% 50% 0 0;
+      background: linear-gradient(180deg, #1a3520 0%, #0f2312 100%);
+    }
+
+    .mountain:nth-child(1) { left: -10%; width: 50%; height: 80%; opacity: 0.6; }
+    .mountain:nth-child(2) { left: 30%; width: 60%; height: 100%; opacity: 0.5; }
+    .mountain:nth-child(3) { right: -15%; width: 55%; height: 90%; opacity: 0.55; }
+
+    /* Forest layers */
+    .forest-layer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Background trees - silhouette layer */
+    .trees-back {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 85%;
+    }
+
+    .tree-silhouette {
+      position: absolute;
+      bottom: 0;
+    }
+
+    .tree-silhouette svg {
+      filter: drop-shadow(0 0 30px rgba(0, 40, 0, 0.8));
+    }
+
+    /* Mid-ground trees with some color */
+    .trees-mid {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 75%;
+    }
+
+    /* Foreground trees */
+    .trees-front {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 50%;
+    }
+
+    /* Ground/forest floor */
+    .ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 15%;
+      background: linear-gradient(
+        0deg,
+        #050d05 0%,
+        #0a1a0a 40%,
+        transparent 100%
+      );
+    }
+
+    /* Mist layers */
+    .mist {
+      position: absolute;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--mist) 20%,
+        var(--mist) 40%,
+        transparent 60%,
+        var(--mist) 80%,
+        transparent 100%
+      );
+      animation: mistDrift 60s linear infinite;
+      opacity: 0.7;
+    }
+
+    .mist:nth-child(1) {
+      bottom: 10%;
+      animation-duration: 80s;
+      animation-delay: -20s;
+    }
+
+    .mist:nth-child(2) {
+      bottom: 25%;
+      animation-duration: 100s;
+      animation-delay: -40s;
+      opacity: 0.4;
+    }
+
+    @keyframes mistDrift {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0%); }
+    }
+
+    /* Light rays */
+    .light-rays {
+      position: absolute;
+      top: 0;
+      left: 20%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 220, 150, 0.15) 0%,
+        rgba(255, 220, 150, 0.05) 30%,
+        transparent 60%
+      );
+      clip-path: polygon(30% 0%, 70% 0%, 90% 100%, 10% 100%);
+      animation: rayPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes rayPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    /* Fireflies */
+    .fireflies {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .firefly {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--firefly);
+      border-radius: 50%;
+      box-shadow:
+        0 0 10px 5px rgba(255, 250, 150, 0.8),
+        0 0 20px 10px rgba(255, 250, 150, 0.4);
+      animation: fireflyFloat 15s ease-in-out infinite;
+    }
+
+    @keyframes fireflyFloat {
+      0%, 100% {
+        transform: translate(0, 0);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      25% {
+        transform: translate(100px, -50px);
+        opacity: 0.8;
+      }
+      50% {
+        transform: translate(50px, -120px);
+        opacity: 1;
+      }
+      75% {
+        transform: translate(-30px, -80px);
+        opacity: 0.6;
+      }
+      90% { opacity: 0; }
+    }
+
+    /* Falling leaves */
+    .leaves {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .leaf {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, #3d6b3d, #2a4f2a);
+      border-radius: 0 50% 50% 50%;
+      transform: rotate(45deg);
+      animation: leafFall linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes leafFall {
+      0% {
+        transform: translateY(-10vh) rotate(0deg) translateX(0);
+        opacity: 0;
+      }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% {
+        transform: translateY(110vh) rotate(720deg) translateX(100px);
+        opacity: 0;
+      }
+    }
+
+    /* Title */
+    .title-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 100;
+      animation: titleFadeIn 3s ease-out forwards;
+      opacity: 0;
+    }
+
+    @keyframes titleFadeIn {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(3rem, 10vw, 8rem);
+      font-weight: 700;
+      color: transparent;
+      background: linear-gradient(
+        180deg,
+        var(--amber-light) 0%,
+        var(--amber) 50%,
+        #8b6914 100%
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      text-shadow:
+        0 0 40px rgba(212, 165, 116, 0.6),
+        0 0 80px rgba(212, 165, 116, 0.3);
+      letter-spacing: 0.1em;
+      animation: titleGlow 4s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(212, 165, 116, 0.5));
+      }
+      50% {
+        filter: drop-shadow(0 0 40px rgba(212, 165, 116, 0.8));
+      }
+    }
+
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 2rem);
+      color: var(--forest-glow);
+      letter-spacing: 0.5em;
+      margin-top: 1rem;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: subtitleFadeIn 2s ease-out 1.5s forwards;
+    }
+
+    @keyframes subtitleFadeIn {
+      to { opacity: 0.7; }
+    }
+
+    /* Monkeys */
+    .monkey {
+      position: absolute;
+      cursor: pointer;
+      transition: filter 0.3s ease;
+    }
+
+    .monkey:hover {
+      filter: brightness(1.2);
+    }
+
+    .monkey svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Monkey animations */
+    @keyframes monkeySwing {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(15deg); }
+    }
+
+    @keyframes monkeyJump {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-30px); }
+    }
+
+    @keyframes monkeyHang {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(10px) rotate(5deg); }
+      50% { transform: translateY(0) rotate(0deg); }
+      75% { transform: translateY(5px) rotate(-3deg); }
+    }
+
+    /* Vines */
+    .vines {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .vine {
+      position: absolute;
+      top: 0;
+      width: 4px;
+      background: linear-gradient(180deg, #2a4a2a, #1a3a1a);
+      border-radius: 2px;
+      transform-origin: top center;
+    }
+
+    
+    /* Bushes */
+    .bush {
+      position: absolute;
+      bottom: 0;
+      border-radius: 50% 50% 45% 45%;
+      background: radial-gradient(ellipse at center, #2d5a2d 0%, #1a3a1a 70%);
+    }
+
+    /* Ambient particles */
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: particleFloat 20s linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+      10% { opacity: 0.5; }
+      90% { opacity: 0.5; }
+      100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <!-- Sky gradient -->
+    <div class="sky"></div>
+
+    <!-- Light rays -->
+    <div class="light-rays"></div>
+
+    <!-- Mountains -->
+    <div class="mountains">
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+      <div class="mountain"></div>
+    </div>
+
+    <!-- Vines -->
+    <div class="vines" id="vines"></div>
+
+    <!-- Trees back layer -->
+    <div class="trees-back" id="treesBack"></div>
+
+    <!-- Trees mid layer -->
+    <div class="trees-mid" id="treesMid"></div>
+
+    <!-- Monkeys container -->
+    <div id="monkeys"></div>
+
+    <!-- Trees front layer -->
+    <div class="trees-front" id="treesFront"></div>
+
+    <!-- Ground -->
+    <div class="ground"></div>
+
+    <!-- Bushes -->
+    <div id="bushes"></div>
+
+    <!-- Mist layers -->
+    <div class="mist"></div>
+    <div class="mist"></div>
+
+    <!-- Fireflies -->
+    <div class="fireflies" id="fireflies"></div>
+
+    <!-- Falling leaves -->
+    <div class="leaves" id="leaves"></div>
+
+    <!-- Ambient particles -->
+    <div id="particles"></div>
+
+    <!-- Title -->
+    <div class="title-container">
+      <h1 class="title">Welcome!</h1>
+    </div>
+  </div>
+
+  
+  <script>
+    // Generate trees
+    function createTrees() {
+      const backLayer = document.getElementById('treesBack');
+      const midLayer = document.getElementById('treesMid');
+      const frontLayer = document.getElementById('treesFront');
+
+      // Tree SVG template
+      const treeSVG = (height, color1, color2, trunkColor) => `
+        <svg width="${height * 0.6}" height="${height}" viewBox="0 0 60 120">
+          <path d="M25 120 L25 90 Q10 85 5 70 Q0 55 15 50 Q5 40 10 25 Q15 10 30 5 Q45 10 50 25 Q55 40 45 50 Q60 55 55 70 Q50 85 35 90 L35 120 Z"
+                fill="${color1}" stroke="${color2}" stroke-width="1"/>
+          <rect x="27" y="90" width="6" height="30" fill="${trunkColor}"/>
+        </svg>
+      `;
+
+      // Pine tree
+      const pineSVG = (height, color1, color2) => `
+        <svg width="${height * 0.4}" height="${height}" viewBox="0 0 40 120">
+          <polygon points="20,0 40,40 35,40 40,70 32,70 40,100 0,100 8,70 0,70 5,40 0,40"
+                   fill="${color1}" stroke="${color2}" stroke-width="1"/>
+          <rect x="17" y="100" width="6" height="20" fill="#3d2817"/>
+        </svg>
+      `;
+
+      // Back trees (darker, smaller)
+      for (let i = 0; i < 25; i++) {
+        const tree = document.createElement('div');
+        tree.className = 'tree-silhouette';
+        tree.style.left = `${(i / 25) * 100 + Math.random() * 5 - 2.5}%`;
+        tree.style.bottom = `${5 + Math.random() * 10}%`;
+        tree.style.opacity = 0.4 + Math.random() * 0.3;
+        const h = 150 + Math.random() * 100;
+        tree.innerHTML = Math.random() > 0.5
+          ? treeSVG(h, '#0a1a0a', '#0f2f0f', '#1a1a0a')
+          : pineSVG(h, '#0a1a0a', '#0f2f0f');
+        backLayer.appendChild(tree);
+      }
+
+      // Mid trees
+      for (let i = 0; i < 15; i++) {
+        const tree = document.createElement('div');
+        tree.className = 'tree-silhouette';
+        tree.style.left = `${(i / 15) * 100 + Math.random() * 8 - 4}%`;
+        tree.style.bottom = `${8 + Math.random() * 5}%`;
+        tree.style.opacity = 0.6 + Math.random() * 0.3;
+        const h = 200 + Math.random() * 150;
+        tree.innerHTML = Math.random() > 0.5
+          ? treeSVG(h, '#1a3a1a', '#2a5a2a', '#2d1a0d')
+          : pineSVG(h, '#1a3a1a', '#2a5a2a');
+        midLayer.appendChild(tree);
+      }
+
+      // Front trees (largest, most detailed)
+      for (let i = 0; i < 8; i++) {
+        const tree = document.createElement('div');
+        tree.className = 'tree-silhouette';
+        tree.style.left = `${(i / 8) * 100 + Math.random() * 5 - 2.5}%`;
+        tree.style.bottom = '0';
+        tree.style.zIndex = 50 - i;
+        const h = 300 + Math.random() * 200;
+        tree.innerHTML = treeSVG(h, '#2d5a2d', '#3d7a3d', '#3d2817');
+        frontLayer.appendChild(tree);
+      }
+    }
+
+    // Create vines
+    function createVines() {
+      const vinesContainer = document.getElementById('vines');
+      for (let i = 0; i < 12; i++) {
+        const vine = document.createElement('div');
+        vine.className = 'vine';
+        vine.style.left = `${5 + i * 8 + Math.random() * 5}%`;
+        vine.style.height = `${150 + Math.random() * 200}px`;
+        vine.style.animation = `vineSway ${3 + Math.random() * 2}s ease-in-out infinite`;
+        vine.style.animationDelay = `${Math.random() * 2}s`;
+        vinesContainer.appendChild(vine);
+      }
+
+      // Add vine sway animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes vineSway {
+          0%, 100% { transform: rotate(${Math.random() * 4 - 2}deg); }
+          50% { transform: rotate(${Math.random() * 8 - 4}deg); }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Create monkeys
+    function createMonkeys() {
+      const monkeysContainer = document.getElementById('monkeys');
+
+      const monkeySVG = `
+        <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body -->
+          <ellipse cx="50" cy="75" rx="25" ry="30" fill="#8B4513"/>
+          <ellipse cx="50" cy="75" rx="20" ry="25" fill="#A0522D"/>
+
+          <!-- Head -->
+          <circle cx="50" cy="35" r="25" fill="#8B4513"/>
+          <circle cx="50" cy="38" r="20" fill="#DEB887"/>
+
+          <!-- Face -->
+          <ellipse cx="50" cy="42" rx="12" ry="10" fill="#FFDAB9"/>
+
+          <!-- Eyes -->
+          <circle cx="42" cy="35" r="5" fill="white"/>
+          <circle cx="58" cy="35" r="5" fill="white"/>
+          <circle cx="43" cy="36" r="2.5" fill="#1a1a1a"/>
+          <circle cx="59" cy="36" r="2.5" fill="#1a1a1a"/>
+          <circle cx="43.5" cy="35" r="1" fill="white"/>
+          <circle cx="59.5" cy="35" r="1" fill="white"/>
+
+          <!-- Nose -->
+          <ellipse cx="50" cy="45" rx="4" ry="3" fill="#8B4513"/>
+          <circle cx="48" cy="45" r="1" fill="#1a1a1a"/>
+          <circle cx="52" cy="45" r="1" fill="#1a1a1a"/>
+
+          <!-- Mouth -->
+          <path d="M 45 52 Q 50 56 55 52" stroke="#8B4513" stroke-width="2" fill="none"/>
+
+          <!-- Ears -->
+          <circle cx="25" cy="35" r="10" fill="#8B4513"/>
+          <circle cx="25" cy="35" r="6" fill="#DEB887"/>
+          <circle cx="75" cy="35" r="10" fill="#8B4513"/>
+          <circle cx="75" cy="35" r="6" fill="#DEB887"/>
+
+          <!-- Arms -->
+          <path d="M 25 70 Q 10 85 15 100" stroke="#8B4513" stroke-width="12" stroke-linecap="round" fill="none"/>
+          <path d="M 75 70 Q 90 85 85 100" stroke="#8B4513" stroke-width="12" stroke-linecap="round" fill="none"/>
+          <circle cx="15" cy="100" r="8" fill="#DEB887"/>
+          <circle cx="85" cy="100" r="8" fill="#DEB887"/>
+
+          <!-- Legs -->
+          <ellipse cx="35" cy="100" rx="8" ry="12" fill="#8B4513"/>
+          <ellipse cx="65" cy="100" rx="8" ry="12" fill="#8B4513"/>
+          <ellipse cx="35" cy="105" rx="10" ry="6" fill="#DEB887"/>
+          <ellipse cx="65" cy="105" rx="10" ry="6" fill="#DEB887"/>
+
+          <!-- Tail -->
+          <path d="M 70 85 Q 95 90 90 70 Q 85 50 100 45" stroke="#8B4513" stroke-width="6" stroke-linecap="round" fill="none"/>
+        </svg>
+      `;
+
+      const monkeyPositions = [
+        { left: '15%', top: '25%', size: '100px', animation: 'monkeySwing 3s ease-in-out infinite', delay: '0s' },
+        { left: '75%', top: '30%', size: '90px', animation: 'monkeySwing 4s ease-in-out infinite', delay: '1s' },
+        { left: '45%', top: '20%', size: '110px', animation: 'monkeyHang 5s ease-in-out infinite', delay: '0.5s' },
+        { left: '85%', top: '45%', size: '85px', animation: 'monkeyJump 2.5s ease-in-out infinite', delay: '1.5s' },
+        { left: '25%', top: '50%', size: '95px', animation: 'monkeyHang 4s ease-in-out infinite', delay: '2s' },
+        { left: '60%', top: '55%', size: '80px', animation: 'monkeySwing 3.5s ease-in-out infinite', delay: '0.8s' },
+      ];
+
+      monkeyPositions.forEach((pos, i) => {
+        const monkey = document.createElement('div');
+        monkey.className = 'monkey';
+        monkey.style.left = pos.left;
+        monkey.style.top = pos.top;
+        monkey.style.width = pos.size;
+        monkey.style.height = pos.size;
+        monkey.style.transformOrigin = 'top center';
+        monkey.innerHTML = monkeySVG;
+        monkey.style.animation = pos.animation;
+        monkey.style.animationDelay = pos.delay;
+
+        // Click interaction
+        monkey.addEventListener('click', () => {
+          monkey.style.animation = 'none';
+          monkey.offsetHeight; // Trigger reflow
+          monkey.style.animation = 'monkeyJump 0.5s ease-out';
+          setTimeout(() => {
+            monkey.style.animation = pos.animation;
+            monkey.style.animationDelay = pos.delay;
+          }, 500);
+        });
+
+        monkeysContainer.appendChild(monkey);
+      });
+    }
+
+    // Create fireflies
+    function createFireflies() {
+      const container = document.getElementById('fireflies');
+      for (let i = 0; i < 30; i++) {
+        const firefly = document.createElement('div');
+        firefly.className = 'firefly';
+        firefly.style.left = `${Math.random() * 100}%`;
+        firefly.style.top = `${30 + Math.random() * 60}%`;
+        firefly.style.animationDuration = `${10 + Math.random() * 10}s`;
+        firefly.style.animationDelay = `${Math.random() * 15}s`;
+        container.appendChild(firefly);
+      }
+    }
+
+    // Create falling leaves
+    function createLeaves() {
+      const container = document.getElementById('leaves');
+      for (let i = 0; i < 20; i++) {
+        const leaf = document.createElement('div');
+        leaf.className = 'leaf';
+        leaf.style.left = `${Math.random() * 100}%`;
+        leaf.style.animationDuration = `${15 + Math.random() * 15}s`;
+        leaf.style.animationDelay = `${Math.random() * 20}s`;
+        leaf.style.opacity = 0.3 + Math.random() * 0.4;
+        container.appendChild(leaf);
+      }
+    }
+
+    // Create bushes
+    function createBushes() {
+      const container = document.getElementById('bushes');
+      const positions = [5, 20, 35, 50, 65, 80, 95];
+      positions.forEach((pos, i) => {
+        const bush = document.createElement('div');
+        bush.className = 'bush';
+        bush.style.left = `${pos - 5 + Math.random() * 10}%`;
+        bush.style.width = `${100 + Math.random() * 100}px`;
+        bush.style.height = `${60 + Math.random() * 40}px`;
+        container.appendChild(bush);
+      });
+    }
+
+    // Create ambient particles
+    function createParticles() {
+      const container = document.getElementById('particles');
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${15 + Math.random() * 20}s`;
+        particle.style.animationDelay = `${Math.random() * 20}s`;
+        container.appendChild(particle);
+      }
+    }
+
+    // Audio handling
+    let audioContext;
+
+    function initAudio() {
+      if (audioContext) return;
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+      // Resume audio context if suspended
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+
+      createForestAmbience();
+    }
+
+    function createForestAmbience() {
+      console.log('Starting forest ambience...');
+
+      // Master gain
+      const masterGain = audioContext.createGain();
+      masterGain.gain.value = 0.3;
+      masterGain.connect(audioContext.destination);
+
+      // 1. Birds - calm and sparse
+      function createBirdSong() {
+        const now = audioContext.currentTime;
+        const baseFreq = 1200 + Math.random() * 800;
+
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(baseFreq, now);
+        osc.frequency.linearRampToValueAtTime(baseFreq * 1.2, now + 0.1);
+        osc.frequency.linearRampToValueAtTime(baseFreq * 0.9, now + 0.2);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.04, now + 0.05);
+        gain.gain.linearRampToValueAtTime(0, now + 0.25);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+
+        osc.start(now);
+        osc.stop(now + 0.3);
+
+        // Next bird
+        setTimeout(createBirdSong, 3000 + Math.random() * 5000);
+      }
+
+      // 2. Owl hoot - very rare
+      function createOwl() {
+        const now = audioContext.currentTime;
+
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.linearRampToValueAtTime(260, now + 0.5);
+
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.05, now + 0.15);
+        gain.gain.linearRampToValueAtTime(0.04, now + 0.4);
+        gain.gain.linearRampToValueAtTime(0, now + 0.7);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+
+        osc.start(now);
+        osc.stop(now + 0.8);
+
+        setTimeout(createOwl, 10000 + Math.random() * 15000);
+      }
+
+      // 3. Rustling leaves - very gentle
+      function createRustle() {
+        const bufferSize = audioContext.sampleRate * 0.15;
+        const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const data = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * (i / bufferSize) * (1 - i / bufferSize);
+        }
+
+        const source = audioContext.createBufferSource();
+        const filter = audioContext.createBiquadFilter();
+        const gain = audioContext.createGain();
+
+        source.buffer = buffer;
+
+        filter.type = 'bandpass';
+        filter.frequency.value = 2500 + Math.random() * 1500;
+        filter.Q.value = 1;
+
+        gain.gain.value = 0.02;
+
+        source.connect(filter);
+        filter.connect(gain);
+        gain.connect(masterGain);
+
+        source.start();
+
+        setTimeout(createRustle, 3000 + Math.random() * 5000);
+      }
+
+      // Start sounds
+      createBirdSong();
+      createOwl();
+      createRustle();
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      createTrees();
+      createVines();
+      createMonkeys();
+      createFireflies();
+      createLeaves();
+      createBushes();
+      createParticles();
+
+      // Auto-start audio on first user interaction
+      function startAudioOnce() {
+        initAudio();
+        document.removeEventListener('click', startAudioOnce);
+        document.removeEventListener('keydown', startAudioOnce);
+      }
+      document.addEventListener('click', startAudioOnce);
+      document.addEventListener('keydown', startAudioOnce);
+    });
+  </script>
+</body>
+</html>
